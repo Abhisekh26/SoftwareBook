@@ -37,6 +37,21 @@ app.get("/user",async(req,res)=>{
 
 
 
+app.delete("/user",async(req,res)=>{
+  const id = req.body.userID
+  try{
+   const userinfo= await User.findOneAndDelete({id})
+    res.send("succesfuly deleted")
+  }
+  catch(err){
+   console.log("an error occured")
+  }
+})
+
+
+
+
+
 linking()
   .then(() => {
     console.log("connected to database");
