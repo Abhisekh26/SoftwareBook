@@ -27,7 +27,7 @@ catch(err){
 app.get("/user",async(req,res)=>{
   const email = req.body.emailID
   try{
-   const userinfo= await User.find({emailID:email})
+   const userinfo= await User.find({})
     res.send(userinfo)
   }
   catch(err){
