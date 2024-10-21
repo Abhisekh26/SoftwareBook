@@ -22,10 +22,21 @@ try{
 catch(err){
   console.log("error happened ")
 }
-
-
-
 });
+
+app.get("/user",async(req,res)=>{
+  const email = req.body.emailID
+  try{
+   const userinfo= await User.find({emailID:email})
+    res.send(userinfo)
+  }
+  catch(err){
+   console.log("an error occured")
+  }
+})
+
+
+
 linking()
   .then(() => {
     console.log("connected to database");
