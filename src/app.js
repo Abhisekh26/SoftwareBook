@@ -4,14 +4,17 @@ const { admin } = require("./middleware/adminAuth");
 const {User} = require("./models/user");
 const app = express();
 
+app.use(express.json()) //middleware to convert data to json 
+
 app.post("/signup", async (req, res) => {
-  const userObj = new User({
-    firstName: "roshini",
-    lastName: "kumari",
-    age: 23,
-    gender: "female",
-    emailID: "roshini@gmail.com",
-  });
+  // const userObj = new User({
+  //   firstName: "roshini",
+  //   lastName: "kumari",
+  //   age: 23,
+  //   gender: "female",
+  //   emailID: "roshini@gmail.com",
+  // });
+  const userObj= new User(req.body)
 try{
   await userObj.save(); //.save()returns a promise so we will use async await
   res.send("user added ")
