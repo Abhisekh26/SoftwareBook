@@ -1,10 +1,10 @@
 const express = require("express");
 const { linking } = require("./config/database");
 const { admin } = require("./middleware/adminAuth");
-const {User} = require("./models/user");
+const { User } = require("./models/user");
 const app = express();
 
-app.use(express.json()) //middleware to convert data to json 
+app.use(express.json()); //middleware to convert data to json
 
 app.post("/signup", async (req, res) => {
   // const userObj = new User({
@@ -14,43 +14,43 @@ app.post("/signup", async (req, res) => {
   //   gender: "female",
   //   emailID: "roshini@gmail.com",
   // });
-  const userObj= new User(req.body)
-try{
-  await userObj.save(); //.save()returns a promise so we will use async await
-  res.send("user added ")
-}
-catch(err){
-  console.log("error happened ")
-}
+  const userObj = new User(req.body);
+  try {
+    await userObj.save(); //.save()returns a promise so we will use async await
+    res.send("user added ");
+  } catch (err) {
+    console.log("error happened ");
+  }
 });
 
-app.get("/user",async(req,res)=>{
-  const email = req.body.emailID
-  try{
-   const userinfo= await User.find({})
-    res.send(userinfo)
+app.get("/user", async (req, res) => {
+  const email = req.body.emailID;
+  try {
+    const userinfo = await User.find({});
+    res.send(userinfo);
+  } catch (err) {
+    console.log("an error occured");
   }
-  catch(err){
-   console.log("an error occured")
+});
+
+app.delete("/user", async (req, res) => {
+  const id = req.body.userID;
+  try {
+    const userinfo = await User.findOneAndDelete({ id });
+    res.send("succesfuly deleted");
+  } catch (err) {
+    console.log("an error occured");
   }
-})
+});
 
-
-
-app.delete("/user",async(req,res)=>{
-  const id = req.body.userID
-  try{
-   const userinfo= await User.findOneAndDelete({id})
-    res.send("succesfuly deleted")
-  }
-  catch(err){
-   console.log("an error occured")
-  }
-})
-
-
-
-
+app.patch("/user", async (req,res) => {
+  const id = req.body.userID;
+  const data = req.body;
+  try {
+    await User.findByIdAndUpdate( id , data);
+    res.send("successfully updated");
+  } catch (err) {}
+});
 
 linking()
   .then(() => {
