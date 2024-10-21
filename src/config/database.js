@@ -9,10 +9,3 @@ module.exports={
     linking
 
 }
-// linking()
-//   .then(() => {
-//     console.log("connected to database");
-//   })
-//   .catch((err) => {
-//     console.log("not connected");
-//   });
