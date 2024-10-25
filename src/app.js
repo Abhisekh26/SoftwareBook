@@ -2,26 +2,50 @@ const express = require("express");
 const { linking } = require("./config/database");
 const { admin } = require("./middleware/adminAuth");
 const { User } = require("./models/user");
+const bcrypt = require("bcrypt"); //used to encrypt password
+const { ValidatesignUpdata } = require("./utilis/Validation");
 const app = express();
 
 app.use(express.json()); //middleware to convert data to json
 
 app.post("/signup", async (req, res) => {
-  // const userObj = new User({
-  //   firstName: "roshini",
-  //   lastName: "kumari",
-  //   age: 23,
-  //   gender: "female",
-  //   emailID: "roshini@gmail.com",
-  // });
-  const userObj = new User(req.body);
   try {
+    ValidatesignUpdata(req);
+    const { password, firstName, lastName, emailID } = req.body;
+    //Encrypt the password using bcrypt libraray
+    const passwordHash = await bcrypt.hash(password, 10); //inbuilt function to decrypt pssword and return a promise
+    //console.log(passwordHash)
+    const userObj = new User({
+      //create a new instance of user model
+      firstName,
+      lastName,
+      password: passwordHash,
+      emailID,
+    });
     await userObj.save(); //.save()returns a promise so we will use async await
     res.send("user added ");
   } catch (err) {
+    res.status(400).send("Error happend" + err.message);
     console.log("error happened ");
   }
 });
+
+app.post("/login",async(req,res)=>{
+  try{
+   const {emailID,password}=req.body
+  const user_exists= await User.findOne({emailID:emailID})
+  if(user_exists){
+    const pass_check= await bcrypt.compare(password,user_exists.password)
+   res.send("Login successful")
+  }
+  else{
+    res.status(400).send("Enter valid credentials")
+  }
+  }
+  catch(Err){
+
+  }
+})
 
 app.get("/user", async (req, res) => {
   const email = req.body.emailID;
@@ -43,11 +67,13 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req,res) => {
+app.patch("/user", async (req, res) => {
   const id = req.body.userID;
   const data = req.body;
   try {
-    await User.findByIdAndUpdate( id , data);
+    await User.findByIdAndUpdate(id, data, {
+      runvalidators: true,
+    });
     res.send("successfully updated");
   } catch (err) {}
 });
